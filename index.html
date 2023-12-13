@@ -11,19 +11,34 @@
             center: [0, 0],
             dimensions: [5, 5],
             rotation: 0,
-            color: "black",
-            units: "px",
             blend_mode: "source-over",
         }
 
-        function draw_command(props) {
-            const props = {...draw_command_defaults, ...props};
-            if(props.units === "%") {
-                props.center[0] /= 100 * canvas.width;
-                props.center[1] /= 100 * canvas.height;
-                props.dimensions = props.dimensions.map((coord) => {
-                    return coord / 100 * canvas.width;
-                });
+        class Canvas {
+            constructor(canvas, preferences) {
+                this.sticky_color = preferences.sticky_color || false;
+                this.sticky_blend = preferences.sticky_blend || false;
+                this.default_color = preferences.default_color || "black";
+                this.default_units = preferences.default_units || "px";
+
+                this.canvas = canvas;
+                this.ctx = canvas.getContext("2d");
+            }
+
+            #draw_command(new_props) {
+                const props = {
+                    ...draw_command_defaults, 
+                    color: this.default_color, 
+                    units: this.default_units, 
+                    ...props
+                };
+                if(props.units === "%") {
+                    props.center[0] /= 100 * canvas.width;
+                    props.center[1] /= 100 * canvas.height;
+                    props.dimensions = props.dimensions.map((coord) => {
+                        return coord / 100 * canvas.width;
+                    });
+                }
             }
         }
 
