@@ -28,10 +28,14 @@
             #draw_command(new_props) {
                 const props = {
                     ...draw_command_defaults, 
-                    color: this.default_color, 
-                    units: this.default_units, 
+                    color: this.sticky_color ? this.last_color || this.default_color : this.default_color, 
+                    units: this.sticky_blend ? this.last_blend || this.last_blend : this.default_units, 
                     ...props
                 };
+
+                this.last_color = props.color;
+                this.last_blend = props.units;
+
                 if(props.units === "%") {
                     props.center[0] /= 100 * canvas.width;
                     props.center[1] /= 100 * canvas.height;
@@ -39,6 +43,8 @@
                         return coord / 100 * canvas.width;
                     });
                 }
+
+                return props;
             }
         }
 
