@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Example</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+
+    <script>
+        function drawTriangle(ctx, props) {
+            let center = props.center || [0, 0];
+            let dimensions = props.dimensions || [5, 5];
+            let rotation = props.rotation || 0;
+            let color = props.color || "black";
+
+            ctx.globalCompositeOperation = "xor";
+
+            let triPoints = [
+                [center[0], center[1] - dimensions[1] / 2],
+                [center[0] + dimensions[0] / 2, center[1] + dimensions[1] / 2],
+                [center[0] - dimensions[0] / 2, center[1] + dimensions[1] / 2]
+            ];
+
+            if(rotation) {
+                triPoints = triPoints.map((point) => {
+                    let x = point[0] - center[0];
+                    let y = point[1] - center[1];
+                    let newX = x * Math.cos(rotation) - y * Math.sin(rotation);
+                    let newY = x * Math.sin(rotation) + y * Math.cos(rotation);
+                    return [newX + center[0], newY + center[1]];
+                });
+            }
+
+            ctx.fillStyle = color;
+
+            ctx.beginPath();
+            ctx.moveTo(triPoints[0][0], triPoints[0][1]);
+            ctx.lineTo(triPoints[1][0], triPoints[1][1]);
+            ctx.lineTo(triPoints[2][0], triPoints[2][1]);
+            ctx.fill();
+        }
+
+        // Get the canvas element
+        var canvas = document.getElementById("myCanvas");
+
+        // Get the 2D rendering context
+        var ctx = canvas.getContext("2d");
+
+        // Your code for drawing on the canvas goes here
+        drawTriangle(ctx, {
+            center: [250, 250],
+            dimensions: [100, 100],
+            rotation: Math.PI / 4,
+            color: "red"
+        });
+
+        drawTriangle(ctx, {
+            center: [300, 250],
+            dimensions: [100, 100],
+            rotation: Math.PI / 4,
+            color: "blue"
+        });
+    </script>
+
+    <style>
+        body {
+            background: black;
+        }
+        
+        canvas {
+            width: 100%;
+            background: transparent;
+        }
+    </style>
+</body>
+</html>
