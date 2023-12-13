@@ -7,7 +7,27 @@
     <canvas id="myCanvas" width="500" height="500"></canvas>
 
     <script>
-        function drawTriangle(ctx, props) {
+        const draw_command_defaults = {
+            center: [0, 0],
+            dimensions: [5, 5],
+            rotation: 0,
+            color: "black",
+            units: "px",
+            blend_mode: "source-over",
+        }
+
+        function draw_command(props) {
+            const props = {...draw_command_defaults, ...props};
+            if(props.units === "%") {
+                props.center[0] /= 100 * canvas.width;
+                props.center[1] /= 100 * canvas.height;
+                props.dimensions = props.dimensions.map((coord) => {
+                    return coord / 100 * canvas.width;
+                });
+            }
+        }
+
+        function draw_triangle(ctx, props) {
             let center = props.center || [0, 0];
             let dimensions = props.dimensions || [5, 5];
             let rotation = props.rotation || 0;
@@ -15,14 +35,14 @@
 
             ctx.globalCompositeOperation = "xor";
 
-            let triPoints = [
+            let tri_points = [
                 [center[0], center[1] - dimensions[1] / 2],
                 [center[0] + dimensions[0] / 2, center[1] + dimensions[1] / 2],
                 [center[0] - dimensions[0] / 2, center[1] + dimensions[1] / 2]
             ];
 
             if(rotation) {
-                triPoints = triPoints.map((point) => {
+                tri_points = tri_points.map((point) => {
                     let x = point[0] - center[0];
                     let y = point[1] - center[1];
                     let newX = x * Math.cos(rotation) - y * Math.sin(rotation);
@@ -34,9 +54,9 @@
             ctx.fillStyle = color;
 
             ctx.beginPath();
-            ctx.moveTo(triPoints[0][0], triPoints[0][1]);
-            ctx.lineTo(triPoints[1][0], triPoints[1][1]);
-            ctx.lineTo(triPoints[2][0], triPoints[2][1]);
+            ctx.moveTo(tri_points[0][0], tri_points[0][1]);
+            ctx.lineTo(tri_points[1][0], tri_points[1][1]);
+            ctx.lineTo(tri_points[2][0], tri_points[2][1]);
             ctx.fill();
         }
 
@@ -47,14 +67,14 @@
         var ctx = canvas.getContext("2d");
 
         // Your code for drawing on the canvas goes here
-        drawTriangle(ctx, {
+        draw_triangle(ctx, {
             center: [250, 250],
             dimensions: [100, 100],
             rotation: Math.PI / 4,
             color: "red"
         });
 
-        drawTriangle(ctx, {
+        draw_triangle(ctx, {
             center: [300, 250],
             dimensions: [100, 100],
             rotation: Math.PI / 4,
