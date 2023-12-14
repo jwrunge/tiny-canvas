@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Example</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+
+    <script src="../dist/palette.iife.js"></script>
+    <script>
+        // Your code for drawing on the canvas goes here
+        draw_triangle(ctx, {
+            center: [250, 250],
+            dimensions: [100, 100],
+            rotation: Math.PI / 4,
+            color: "red"
+        });
+
+        draw_triangle(ctx, {
+            center: [300, 250],
+            dimensions: [100, 100],
+            rotation: Math.PI / 4,
+            color: "blue"
+        });
+    </script>
+
+    <style>
+        body {
+            background: black;
+        }
+        
+        canvas {
+            width: 100%;
+            background: transparent;
+        }
+    </style>
+</body>
+</html>
