@@ -18,7 +18,6 @@ export default class Palette extends Draw_Node {
             default:
                 throw new Error("Invalid mode!");
         }
-        this._Renderer.canvas = null;
         return this;
     }
 }

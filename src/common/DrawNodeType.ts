@@ -3,20 +3,20 @@ import Draw_Node from "./DrawNode";
 import { matrix_multiply } from "./util";
 
 export default class Draw_Node_Type extends Draw_Node {
-    #type: Node_Type;
-    #draw_settings: Node_Draw_Settings;
+    _type: Node_Type;
+    _draw_settings: Node_Draw_Settings;
 
     constructor(type: Node_Type, parent: Draw_Node, draw_settings: Node_Draw_Settings) { 
         super();
-        this.#type = type;
+        this._type = type;
         this._parent = parent;
-        this.#draw_settings = draw_settings;
+        this._draw_settings = draw_settings;
 
         return this;
     }
 
     set_paint(draw_settings: Partial<Node_Draw_Settings>) {
-        this.#draw_settings = {...this.#draw_settings, ...draw_settings};
+        this._draw_settings = {...this._draw_settings, ...draw_settings};
     }
 
     #apply_parent_transformation_history() {
@@ -37,25 +37,6 @@ export default class Draw_Node_Type extends Draw_Node {
 
     _render() {
         this.#apply_parent_transformation_history();
-        
-        switch(this.#type) {
-            case "Ellipse":
-                break;
-            case "Triangle":
-
-                break;
-            case "Rectangle":
-                break;
-            case "Star":
-                break;
-            case "Line":
-                break;
-            case "Path":
-                break;
-            case "Text":
-                break;
-            case "Sprite":
-                break;
-        }
+        this._Renderer._draw(this._type, this._draw_settings, this._spatial);
     }
 }

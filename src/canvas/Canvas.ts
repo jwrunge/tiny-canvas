@@ -1,23 +1,10 @@
-import { PaletteConstructorPreferences } from "../common/typesAndDefaults";
+import { Node_Draw_Settings, Node_Type, PaletteConstructorPreferences, Renderer, Spatial } from "../common/typesAndDefaults";
 
-const DRAW_CMD_DEFAULTS = {
-    center: [0, 0],
-    dimensions: [5, 5],
-    rotation: 0,
-    blend_mode: "source-over",
-}
-
-export default class Canvas {
+export default class Canvas implements Renderer {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
 
-    #default_color: string;
-    #default_units: string;
-
     constructor(ops: PaletteConstructorPreferences) {
-        this.#default_color = ops.default_color || "black";
-        this.#default_units = ops.default_units || "px";
-
         if(typeof ops.canvas === "string") ops.canvas = document.querySelector(ops.canvas) as HTMLCanvasElement | null;
         if(ops.canvas instanceof HTMLCanvasElement) this.canvas = ops.canvas;
 
@@ -27,31 +14,33 @@ export default class Canvas {
         return this;
     }
 
-    #draw_command(new_props) {
-        const props = {
-            ...DRAW_CMD_DEFAULTS, 
-            color: this.#default_color,
-            units: this.#default_units,
-            ...new_props
-        };
-
-        if(props.units === "%") {
-            props.center[0] /= 100 * this.canvas.width;
-            props.center[1] /= 100 * this.canvas.height;
-            props.dimensions = props.dimensions.map((coord) => {
-                return coord / 100 * this.canvas.width;
-            });
+    _draw(type: Node_Type, draw: Node_Draw_Settings, spatial: Spatial) {
+        switch(type) {
+            case "Ellipse":
+                break;
+            case "Triangle":
+                this._draw_triangle(this.ctx, draw, spatial);
+                break;
+            case "Rectangle":
+                break;
+            case "Star":
+                break;
+            case "Line":
+                break;
+            case "Path":
+                break;
+            case "Text":
+                break;
+            case "Sprite":
+                break;
         }
-
-        return props;
     }
 
-    draw_triangle(ctx, props) {
-        this.#draw_command(props);
-        let center = props.center || [0, 0];
-        let dimensions = props.dimensions || [5, 5];
-        let rotation = props.rotation || 0;
-        let color = props.color || "black";
+    _draw_triangle(ctx: CanvasRenderingContext2D, draw: Node_Draw_Settings, spatial: Spatial) {
+        let pos = spatial.position || [0, 0];
+        let dimensions = spatial.dimensions || [5, 5];
+        let rotation = spatial.rotation || 0;
+        let color = draw.color || "black";
     
         ctx.globalCompositeOperation = "xor";
     
