@@ -1,9 +1,15 @@
-import { Node_Draw_Settings, Node_Type, type Spatial } from "./typesAndDefaults";
+import { Node_Draw_Settings, Node_Type, RendererType, type Spatial } from "./typesAndDefaults";
 import Draw_Node_Type from "./DrawNodeType";
 
 export default class Draw_Node {
     _spatial?: Spatial;
     _parent?: Draw_Node;
+    _Renderer: RendererType;
+
+    constructor() {
+        this._Renderer = this._parent?._Renderer;
+        return this;
+    }
 
     _transform() {
 

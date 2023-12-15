@@ -1,3 +1,5 @@
+import Canvas from "../canvas/Canvas";
+
 export interface PaletteConstructorPreferences {
     mode: Mode,
     canvas?: HTMLCanvasElement | string | null,
@@ -6,6 +8,7 @@ export interface PaletteConstructorPreferences {
 }
 
 export type Mode = "Canvas" | "WebGL" | "WebGPU";
+export type RendererType = Canvas;
 export type Node_Type = "Ellipse" | "Triangle" | "Rectangle" | "Star" | "Line" | "Path" | "Text" | "Sprite";
 export type Blend_Mode = "standard" | "xor";
 export type Vector2 = [number, number];
