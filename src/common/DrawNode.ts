@@ -5,7 +5,7 @@ export default class Draw_Node {
     _local_transform: Transform;
     _transform_mask: Transform;
     _parent: Draw_Node;
-    _ancestry?: Draw_Node[] = [];
+    _ancestry?: Draw_Node[];
     _Renderer: RendererType;
     _type: Node_Type;
     _draw_settings: Node_Draw_Settings;
@@ -53,10 +53,11 @@ export default class Draw_Node {
     //Apply parent transformations and render
     #apply_parent_transformation_history(): Transform {
         if(!this._ancestry) {
-            let parent = this._parent;
-            while(parent) {
-                this._ancestry.push(parent);
-                parent = parent._parent;
+            this._ancestry = [];
+            let ancestor = this._parent;
+            while(ancestor instanceof Draw_Node) {
+                this._ancestry.push(ancestor);
+                ancestor = ancestor._parent;
             }
             this._ancestry.reverse();
         }

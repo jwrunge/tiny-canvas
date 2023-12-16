@@ -1,4 +1,4 @@
-import { Node_Draw_Settings, Node_Type, PaletteConstructorPreferences, Renderer, Vector2, Transform } from "../common/typesAndDefaults";
+import { Node_Draw_Settings, Node_Type, PaletteConstructorPreferences, Renderer, Transform } from "../common/typesAndDefaults";
 
 export default class Canvas implements Renderer {
     canvas: HTMLCanvasElement;
