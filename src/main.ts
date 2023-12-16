@@ -1,10 +1,10 @@
-import { PaletteConstructorPreferences } from "./common/typesAndDefaults";
+import { PaletteConstructorPreferences, RendererType } from "./common/typesAndDefaults";
 import Canvas from "./canvas/Canvas";
-import Draw_Node from "./common/DrawNode";
 
-export default class Palette extends Draw_Node {
+export default class Palette {
+    _Renderer: RendererType;
+
     constructor(ops: PaletteConstructorPreferences) {
-        super();
         switch(ops.mode) {
             case "Canvas":
                 this._Renderer = new Canvas(ops);

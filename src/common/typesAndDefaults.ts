@@ -19,23 +19,16 @@ type ScaleX = number;
 type ScaleY = number;
 type ShearX = number;
 type ShearY = number;
-type Rotation = number;
-type SkewX = number;
-type SkewY = number;
 
 // Transform matrix example
 
-export type Transform = [number, number, number][];
+export type Transform = [[ ScaleX, ShearX, TransX ],
+                         [ ShearY, ScaleY, TransY ],
+                         [ 0,      0,      1      ]];
 
 export interface Renderer {
-    _draw(type: Node_Type, draw: Node_Draw_Settings, spatial: Spatial): void,
-    _draw_triangle(ctx: CanvasRenderingContext2D, draw: Node_Draw_Settings, spatial: Spatial): void
-}
-
-export interface Spatial {
-    position: Vector2;
-    dimensions: Vector2;
-    transform: Transform;
+    _draw(type: Node_Type, draw: Node_Draw_Settings, transform: Transform): void,
+    _draw_triangle(ctx: CanvasRenderingContext2D, draw: Node_Draw_Settings, transform: Transform): void
 }
 
 export interface Node_Draw_Settings {
