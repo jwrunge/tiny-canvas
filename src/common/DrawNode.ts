@@ -9,6 +9,7 @@ export default class Draw_Node {
     _Renderer: RendererType;
     _type: Node_Type;
     _draw_settings: Node_Draw_Settings;
+    _z_index: number = 0;
 
     constructor(type: Node_Type, parent: Draw_Node, draw_settings: Node_Draw_Settings) {
         this._Renderer = this._parent?._Renderer;
