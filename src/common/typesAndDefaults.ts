@@ -1,4 +1,6 @@
 import Canvas from "../canvas/Canvas";
+import type Palette from "../main";
+import Draw_Node from "./DrawNode";
 
 export interface PaletteConstructorPreferences {
     mode: Mode,
@@ -9,7 +11,7 @@ export interface PaletteConstructorPreferences {
 
 export type Mode = "Canvas" | "WebGL" | "WebGPU";
 export type RendererType = Canvas;
-export type Node_Type = "Ellipse" | "Triangle" | "Rectangle" | "Star" | "Line" | "Path" | "Text" | "Sprite";
+export type Node_Type = "Ellipse" | "Triangle" | "Rectangle" | "Star" | "Path" | "Text" | "Image" | "Sprite";
 export type Blend_Mode = "standard" | "xor";
 export type Vector2 = [number, number];
 
@@ -26,9 +28,41 @@ export type Transform = [[ ScaleX, ShearX, TransX ],
                          [ ShearY, ScaleY, TransY ],
                          [ 0,      0,      1      ]];
 
+export interface CircularDimensions {
+    radius: number
+}
+
+export interface EllipseDimensions {
+    radius_x: number,
+    radius_y: number
+}
+
+export interface RectangleDimensions {
+    width: number,
+    height: number
+}
+
+export interface StarDimensions {
+    radius: number,
+    points: number
+}
+
+export interface TriangleDimensions {
+    base: number,
+    height: number
+}
+
+export type Dimensions = CircularDimensions | EllipseDimensions | RectangleDimensions | StarDimensions | TriangleDimensions;
+
 export interface Renderer {
-    _draw(type: Node_Type, draw: Node_Draw_Settings, transform: Transform): void,
-    _draw_triangle(ctx: CanvasRenderingContext2D, draw: Node_Draw_Settings, transform: Transform): void
+    _root: Palette;
+    _draw(type: Node_Type, dimensions: Dimensions, transform: Transform, draw: Node_Draw_Settings): void,
+    _draw_triangle(dimensions: TriangleDimensions, transform: Transform, draw: Node_Draw_Settings): void
+}
+
+export interface Godlike {
+    create(type: Node_Type, draw_settings: Node_Draw_Settings): Draw_Node;
+    destroy(node: Draw_Node): void;
 }
 
 export interface Node_Draw_Settings {

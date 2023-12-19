@@ -1,42 +1,40 @@
-import { Node_Draw_Settings, Node_Type, PaletteConstructorPreferences, Renderer, Transform } from "../common/typesAndDefaults";
+import { Node_Draw_Settings, Node_Type, Renderer, Transform, type Dimensions, type TriangleDimensions } from "../common/typesAndDefaults";
+import type Palette from "../main";
 
 export default class Canvas implements Renderer {
-    canvas: HTMLCanvasElement;
-    ctx: CanvasRenderingContext2D;
+    _root: Palette;
 
-    constructor(ops: PaletteConstructorPreferences) {
-        if(typeof ops.canvas === "string") ops.canvas = document.querySelector(ops.canvas) as HTMLCanvasElement | null;
-        if(ops.canvas instanceof HTMLCanvasElement) this.canvas = ops.canvas;
-
-        if(!this.canvas) throw new Error("Invalid canvas element!");
-        this.ctx = this.canvas?.getContext("2d");
-
-        return this;
+    constructor(root: Palette) {
+        this._root = root;
     }
 
-    _draw(type: Node_Type, draw: Node_Draw_Settings, transform: Transform) {
+    _draw(type: Node_Type, dimensions: Dimensions, transform: Transform, draw: Node_Draw_Settings) {
         switch(type) {
             case "Ellipse":
+                //With option for arcs
                 break;
             case "Triangle":
-                this._draw_triangle(this.ctx, draw, transform);
+                //With option for right triangle, rounding
+                this._draw_triangle(dimensions as TriangleDimensions, transform, draw);
                 break;
             case "Rectangle":
+                //With option for rounding
                 break;
             case "Star":
-                break;
-            case "Line":
+                //With option for rounding, multiple points
                 break;
             case "Path":
                 break;
             case "Text":
+                break;
+            case "Image":
                 break;
             case "Sprite":
                 break;
         }
     }
 
-    _draw_triangle(ctx: CanvasRenderingContext2D, draw: Node_Draw_Settings, transform: Transform) {
+    _draw_triangle(_dimensions: TriangleDimensions, _transform: Transform,_draw: Node_Draw_Settings) {
         // let pos = spatial.position || [0, 0];
         // let dimensions = spatial.dimensions || [5, 5];
         // let rotation = spatial.rotation || 0;
