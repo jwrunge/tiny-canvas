@@ -1,32 +1,42 @@
 import Palette from "../main";
-import { Dimensions, Godlike, Node_Draw_Settings, Node_Type, RendererType, Transform } from "./typesAndDefaults";
 import { matrix_multiply, sort_nodes } from "./util";
+import { Dimensions, Node_Type, TypeBasedDimensions } from "../types/drawNode";
+import { Transform } from "../types/transforms";
+import { Godlike, Renderer_Type, Node_Draw_Settings, Typed_Renderer } from "../types/general";
 
-export default class Draw_Node implements Godlike {
+export default class Draw_Node<T extends Node_Type> implements Godlike {
     _root: Palette;
     _dimensions: Dimensions;
     _local_transform: Transform;
     _transform_mask: Transform;
-    _parent: Draw_Node;
-    _ancestry: Draw_Node[];
-    _children?: Draw_Node[];
-    _Renderer: RendererType;
+    _parent: Draw_Node<T>;
+    _ancestry: Draw_Node<T>[];
+    _children?: Draw_Node<T>[];
+    _Renderer: Typed_Renderer<Renderer_Type>;
     _type: Node_Type;
     _draw_settings: Node_Draw_Settings;
     _ancestry_index: number = 0;
     _z_index: number = 0;
 
-    constructor(root: Palette, type: Node_Type, parent: Draw_Node, draw_settings: Node_Draw_Settings) {
+    constructor(root: Palette, type: T, parent: Draw_Node<any> | null, draw_settings: Node_Draw_Settings) {
         this._root = root;
         this._Renderer = this._parent?._Renderer;
         this._type = type;
         this._parent = parent;
         this._draw_settings = draw_settings;
         this.#determine_ancestry();
-        return this;
     }
 
-    //Set local spatial transform
+    //Set dimensions
+    set_dimensions(dimensions: Dimensions) {
+        this._dimensions = dimensions;
+    }
+
+    update_dimensions(dimensions: Partial<Dimensions>) {
+        this._dimensions = {...this._dimensions, ...dimensions};
+    }
+
+    //Set local transform
     transform(trans: Transform) {
         this._local_transform  = trans;
     }
@@ -81,14 +91,14 @@ export default class Draw_Node implements Godlike {
     }
 
     //Create
-    create(type: Node_Type, draw_settings: Node_Draw_Settings) {
-        let node = new Draw_Node(this._root, type, null, draw_settings);
+    create<T extends Node_Type>(type: T, dimensions: TypeBasedDimensions<T>, draw_settings: Node_Draw_Settings) {
+        let node = new Draw_Node<T>(this._root, type, null, draw_settings);
         this._children.push(node);
         sort_nodes(this._children);
         return node;
     }
 
-    destroy(node?: Draw_Node) {
+    destroy(node?: Draw_Node<any>) {
         if(!node) node = this;
         else {
             let index = this._children.indexOf(node);
@@ -106,6 +116,6 @@ export default class Draw_Node implements Godlike {
     //Render
     _render() {
         let combined_transform = this.#apply_parent_transformation_history();
-        this._Renderer._draw(this._type, combined_transform, this._draw_settings);
+        this._Renderer._draw(this._type, this._dimensions, combined_transform, this._draw_settings);
     }
 }

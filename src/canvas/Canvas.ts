@@ -1,4 +1,6 @@
-import { Node_Draw_Settings, Node_Type, Renderer, Transform, type Dimensions, type TriangleDimensions } from "../common/typesAndDefaults";
+import { Dimensions, Node_Type, TriangleDimensions } from "../types/drawNode";
+import { Transform } from "../types/transforms";
+import { Node_Draw_Settings, Renderer } from "../types/general";
 import type Palette from "../main";
 
 export default class Canvas implements Renderer {
