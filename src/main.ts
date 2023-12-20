@@ -37,7 +37,7 @@ export default class Palette implements Godlike {
     }
 
     create<T extends Node_Type>(type: T, dimensions: TypeBasedDimensions<T>, draw_settings: Node_Draw_Settings) {
-        let node = new Draw_Node(this, type, null, draw_settings);
+        let node = new Draw_Node(this, type, null, dimensions, draw_settings);
         this.#registered_nodes.push(node);
         sort_nodes(this.#registered_nodes);
         return node;
