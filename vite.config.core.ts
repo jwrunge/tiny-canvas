@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
+    base: "./",
     build: {
         lib: {
             entry: "src/main.ts",
@@ -9,5 +10,8 @@ export default defineConfig({
             fileName: (format) => `palette.${format}.js`,
         },
         sourcemap: "hidden"
+    },
+    server: {
+        open: "/test/index.html"
     }
 });

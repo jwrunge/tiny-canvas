@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite build -c vite.config.core.ts && sirv .",
+    "dev": "vite -c vite.config.core.ts",
     "build": "tsc && vite -c vite.config.core.ts build"
   },
   "devDependencies": {
