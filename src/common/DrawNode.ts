@@ -109,13 +109,13 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
         const mirror_y = this.#transforms.mirror === "y" || this.#transforms.mirror === "xy" ? -1 : 1;
 
         let t: Transform = [
-            [this.#transforms.scale[0] * mirror_x,  this.#transforms.skew[0],               0],
-            [this.#transforms.skew[1],              this.#transforms.scale[1] * mirror_y,   0],
+            [this.#transforms.scale[0] * mirror_x,  this.#transforms.skew[0],               this.#transforms.translation[0]],
+            [this.#transforms.skew[1],              this.#transforms.scale[1] * mirror_y,   this.#transforms.translation[1]],
             [0,                                     0,                                      1],
         ];
 
         const rotationMatrix: Transform = [
-            [Math.cos(this.#transforms.rotation), -Math.sin(this.#transforms.rotation), 0],
+            [Math.cos(this.#transforms.rotation), -Math.sin(this.#transforms.rotation), 0], 
             [Math.sin(this.#transforms.rotation), Math.cos(this.#transforms.rotation), 0],
             [0, 0, 1],
         ];
