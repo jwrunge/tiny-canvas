@@ -6,8 +6,9 @@
 <body>
     <canvas id="myCanvas" width="500" height="500"></canvas>
 
-    <script src="../dist/palette.iife.js"></script>
-    <script>
+    <!-- <script type="module" src="../src/main.ts"></script> -->
+    <script type="module">
+        import Palette from "/src/main.ts";
         const canvas = document.getElementById('myCanvas');
         const P = new Palette("Canvas", {canvas});
 

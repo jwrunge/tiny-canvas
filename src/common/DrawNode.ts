@@ -107,22 +107,22 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
     #apply_transforms() {
         //Account for transform origin
         const transform_origin: Transform = [
-            [1, 0, this._transform_origin[0]],
-            [0, 1, this._transform_origin[1]],
+            [1, 0, 0],//this._transform_origin[0]],
+            [0, 1, 0],//this._transform_origin[1]],
             [0, 0, 1],
         ];
 
-        let m: Transform = structuredClone(transform_origin);
+        // let m: Transform = structuredClone(transform_origin);
 
         //Scaling
         const scale: Transform = [
-            [this.#transforms.scale[0], 0, -this._transform_origin[0]],
-            [0, this.#transforms.scale[1], -this._transform_origin[1]],
+            [this.#transforms.scale[0], 0, 0],
+            [0, this.#transforms.scale[1], 0],
             [0, 0, 1],
         ];
 
         // m = matrix_multiply(transform_origin, scale);
-        m = scale;
+        let m = scale;
 
         let cos = Math.cos(this.#transforms.rotation);
         let sin = Math.sin(this.#transforms.rotation);
@@ -148,19 +148,19 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
 
         m = matrix_add(translate_transform, m);
 
-        //Skew
-        let skew_transform: Transform = [
-            [1, Math.tan(this.#transforms.skew[0]), 0],
-            [Math.tan(this.#transforms.skew[1]), 1, 0],
-            [0, 0, 1],
-        ];
+        // //Skew
+        // let skew_transform: Transform = [
+        //     [1, Math.tan(this.#transforms.skew[0]), 0],
+        //     [Math.tan(this.#transforms.skew[1]), 1, 0],
+        //     [0, 0, 1],
+        // ];
 
-        //Mirror
-        let mirror_transform: Transform = [
-            [["x", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0, 0],
-            [0, ["y", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0],
-            [0, 0, 1],
-        ];
+        // //Mirror
+        // let mirror_transform: Transform = [
+        //     [["x", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0, 0],
+        //     [0, ["y", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0],
+        //     [0, 0, 1],
+        // ];
 
         this._local_transform = m;
         return m;
