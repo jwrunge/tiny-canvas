@@ -9,9 +9,23 @@
     <script src="../dist/palette.iife.js"></script>
     <script>
         const canvas = document.getElementById('myCanvas');
-        const P = Palette(canvas);
+        const P = new Palette("Canvas", {canvas});
 
-        P.create("Triangle", {}, )
+        let tri = P.create("Triangle", { base: 10, height: 15 }, { color: "red"});
+        tri.transform_origin(5, 15);
+        tri.scale(10, 10);
+        tri.rotate(30);
+        tri.translate(105, 100);
+
+        let tri2 = tri.create("Triangle", { base: 10, height: 15 }, { color: "green"}).translate(10, 10);
+        console.log(tri2);
+        
+        let rotation = 0;
+        setInterval(() => {
+            rotation += 1;
+            tri.rotate(rotation);
+            P.render();
+        }, 1000/60);
     </script>
 
     <style>
@@ -21,7 +35,7 @@
         
         canvas {
             width: 100%;
-            background: transparent;
+            background: blue;
         }
     </style>
 </body>

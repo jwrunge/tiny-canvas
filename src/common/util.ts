@@ -19,3 +19,27 @@ export function matrix_multiply(a: Transform, b: Transform): Transform {
 
     return result;
 }
+
+export function matrix_add(a: Transform, b: Transform): Transform {
+    let result: Transform = [[0, 0, 0], [0, 0, 0], [0, 0, 1]];
+
+    for(let i = 0; i < a.length; i++) {
+        for(let j = 0; j < a[0].length; j++) {
+            result[i][j] = a[i][j] + b[i][j];
+        }
+    }
+
+    return result;
+}
+
+export function matrix_subtract(a: Transform, b: Transform): Transform {
+    let result: Transform = [[0, 0, 0], [0, 0, 0], [0, 0, 1]];
+
+    for(let i = 0; i < a.length; i++) {
+        for(let j = 0; j < a[0].length; j++) {
+            result[i][j] = a[i][j] - b[i][j];
+        }
+    }
+
+    return result;
+}

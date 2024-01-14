@@ -1,5 +1,5 @@
 import Palette from "../main";
-import { matrix_multiply, sort_nodes } from "./util";
+import { matrix_add, matrix_multiply, matrix_subtract, sort_nodes } from "./util";
 import { Dimensions, Node_Type, TypeBasedDimensions } from "../types/drawNode";
 import { Transform } from "../types/transforms";
 import { Godlike, Node_Draw_Settings } from "../types/general";
@@ -7,6 +7,13 @@ import { Godlike, Node_Draw_Settings } from "../types/general";
 export default class Draw_Node<T extends Node_Type> implements Godlike {
     _root: Palette;
     _dimensions: Dimensions;
+    #transforms: {
+        scale: [number, number],
+        rotation: number,
+        translation: [number, number],
+        skew: [number, number],
+        mirror: "x" | "y" | "xy" | "none"
+    }
     _local_transform: Transform;
     _transform_mask: Transform;
     _parent: Draw_Node<T>;
@@ -16,6 +23,7 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
     _children?: Draw_Node<T>[];
     _type: Node_Type;
     _draw_settings: Node_Draw_Settings;
+    _transform_origin: [number, number] = [0, 0];
 
     constructor(root: Palette, type: T, parent: Draw_Node<any> | null, dimensions: TypeBasedDimensions<T>, draw_settings: Node_Draw_Settings) {
         this._root = root;
@@ -23,43 +31,139 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
         this._parent = parent;
         this._draw_settings = draw_settings;
         this._dimensions = dimensions;
+        this.#transforms = {
+            scale: [1, 1],
+            rotation: 0,
+            translation: [0, 0],
+            skew: [0, 0],
+            mirror: "none",
+        }
+        this._local_transform = [
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, 1],
+        ];
         this.#determine_ancestry();
     }
 
     //Set dimensions
-    set_dimensions(dimensions: Dimensions) {
-        this._dimensions = dimensions;
+    dimensions(dimensions?: Dimensions) {
+        if(!dimensions) return this._dimensions;
+        this._dimensions = {...this._dimensions, ...dimensions};
+        return this;
     }
 
-    update_dimensions(dimensions: Partial<Dimensions>) {
-        this._dimensions = {...this._dimensions, ...dimensions};
+    transform_origin(x?: number, y?: number) {
+        if(x === undefined || y === undefined) return this._transform_origin;
+        this._transform_origin = [x, y];
+        return this;
     }
 
     //Set local transform
-    transform(trans: Transform) {
+    matrix(trans?: Transform) {
+        if(!trans) return this._local_transform;
         this._local_transform  = trans;
+        return this;
     }
 
-    //Convenience transform aliases
-    scale(x: number, y: number) {
-        console.log(x, y)
+    //Convenience transform aliases (multiplicative)
+    scale(x?: number, y?: number) {
+        if(x === undefined || y === undefined) return this.#transforms.scale;
+
+        this.#transforms.scale = [x, y];
+        return this;
     }
 
     rotate(angle: number, units: "deg" | "rad" = "deg") {
-        console.log(angle, units)
+        if(angle === undefined) return this.#transforms.rotation;
+        if(units === "deg") angle = angle * Math.PI / 180;
+        this.#transforms.rotation = angle;
+        return this;
     }
 
     translate(x: number, y: number) {
-        this._local_transform[0][2] = x;
-        this._local_transform[1][2] = y;
+        if(x === undefined || y === undefined) return this.#transforms.translation;
+        this.#transforms.translation = [x, y];
+        return this;
     }
 
     skew(x: number, y: number) {
-        console.log(x, y)
+        if(x === undefined || y === undefined) return this.#transforms.skew;
+        this.#transforms.skew = [x, y];
+        return this;
     }
 
-    mirror(axis: "x" | "y") {
-        console.log(axis)
+    //Alias for skew
+    shear(x?: number, y?: number) {
+        return this.skew(x, y);
+    }
+
+    mirror(axis: "x" | "y" | "xy" | "none") {
+        if(axis === undefined) return this.#transforms.mirror;
+        this.#transforms.mirror = axis;
+        return this;
+    }
+
+    #apply_transforms() {
+        //Account for transform origin
+        const transform_origin: Transform = [
+            [1, 0, this._transform_origin[0]],
+            [0, 1, this._transform_origin[1]],
+            [0, 0, 1],
+        ];
+
+        let m: Transform = structuredClone(transform_origin);
+
+        //Scaling
+        const scale: Transform = [
+            [this.#transforms.scale[0], 0, -this._transform_origin[0]],
+            [0, this.#transforms.scale[1], -this._transform_origin[1]],
+            [0, 0, 1],
+        ];
+
+        // m = matrix_multiply(transform_origin, scale);
+        m = scale;
+
+        let cos = Math.cos(this.#transforms.rotation);
+        let sin = Math.sin(this.#transforms.rotation);
+        //Rotationhis.#transforms.rotation);
+
+        //Origin transform 2
+        // m = matrix_add(transform_origin, m);
+        
+        const rot_transform: Transform = [
+            [cos, -sin, 0],
+            [sin, cos, 0],
+            [0, 0, 1],
+        ];
+
+        m = matrix_multiply(rot_transform, m);
+
+        //Translate
+        let translate_transform: Transform = [
+            [1, 0, this.#transforms.translation[0]],
+            [0, 1, this.#transforms.translation[1]],
+            [0, 0, 1],
+        ];
+
+        m = matrix_add(translate_transform, m);
+
+        //Skew
+        let skew_transform: Transform = [
+            [1, Math.tan(this.#transforms.skew[0]), 0],
+            [Math.tan(this.#transforms.skew[1]), 1, 0],
+            [0, 0, 1],
+        ];
+
+        //Mirror
+        let mirror_transform: Transform = [
+            [["x", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0, 0],
+            [0, ["y", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0],
+            [0, 0, 1],
+        ];
+
+        this._local_transform = m;
+        return m;
     }
 
     //Paint settings
@@ -81,7 +185,7 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
 
     //Apply parent transformations and render
     #apply_parent_transformation_history(): Transform {
-        let combined_transform: Transform = this._local_transform;
+        let combined_transform: Transform = this.#apply_transforms();
         for(let ancestor of this._ancestry) {
             combined_transform = matrix_multiply(ancestor._local_transform, combined_transform);
         }
@@ -92,8 +196,10 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
     //Create
     create<T extends Node_Type>(type: T, dimensions: TypeBasedDimensions<T>, draw_settings: Node_Draw_Settings) {
         let node = new Draw_Node<T>(this._root, type, this, dimensions, draw_settings);
+        if(!this._children) this._children = [];
         this._children.push(node);
         sort_nodes(this._children);
+        console.log("NEW CHILD", node)
         return node;
     }
 
@@ -115,6 +221,12 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
     //Render
     _render() {
         let combined_transform = this.#apply_parent_transformation_history();
+        //Account for transform origin
+        combined_transform = matrix_multiply([
+            [1, 0, this._transform_origin[0]],
+            [0, 1, this._transform_origin[1]],
+            [0, 0, 1],
+        ], combined_transform);
         this._root._Renderer._draw(this._type, this._dimensions, combined_transform, this._draw_settings);
     }
 }

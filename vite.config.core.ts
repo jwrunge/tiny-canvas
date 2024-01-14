@@ -7,6 +7,7 @@ export default defineConfig({
             name: "Palette",
             formats: ["iife", "es", "cjs"],
             fileName: (format) => `palette.${format}.js`,
-        }
+        },
+        sourcemap: "hidden"
     }
 });

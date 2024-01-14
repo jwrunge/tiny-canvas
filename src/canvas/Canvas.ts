@@ -17,6 +17,7 @@ export default class Canvas implements Renderer {
                 break;
             case "Triangle":
                 //With option for right triangle, rounding
+                console.log("Drawing triangle", dimensions, transform, draw);
                 this._draw_triangle(dimensions as TriangleDimensions, transform, draw);
                 break;
             case "Rectangle":
@@ -36,36 +37,42 @@ export default class Canvas implements Renderer {
         }
     }
 
-    _draw_triangle(_dimensions: TriangleDimensions, _transform: Transform,_draw: Node_Draw_Settings) {
-        // let pos = spatial.position || [0, 0];
-        // let dimensions = spatial.dimensions || [5, 5];
-        // let rotation = spatial.rotation || 0;
-        // let color = draw.color || "black";
-    
-        // ctx.globalCompositeOperation = "xor";
-    
-        // let tri_points = [
-        //     [center[0], center[1] - dimensions[1] / 2],
-        //     [center[0] + dimensions[0] / 2, center[1] + dimensions[1] / 2],
-        //     [center[0] - dimensions[0] / 2, center[1] + dimensions[1] / 2]
-        // ];
-    
-        // if(rotation) {
-        //     tri_points = tri_points.map((point) => {
-        //         let x = point[0] - center[0];
-        //         let y = point[1] - center[1];
-        //         let newX = x * Math.cos(rotation) - y * Math.sin(rotation);
-        //         let newY = x * Math.sin(rotation) + y * Math.cos(rotation);
-        //         return [newX + center[0], newY + center[1]];
-        //     });
-        // }
-    
-        // ctx.fillStyle = color;
-    
-        // ctx.beginPath();
-        // ctx.moveTo(tri_points[0][0], tri_points[0][1]);
-        // ctx.lineTo(tri_points[1][0], tri_points[1][1]);
-        // ctx.lineTo(tri_points[2][0], tri_points[2][1]);
-        // ctx.fill();
+    _draw_triangle(_dimensions: TriangleDimensions, _transform: Transform, _draw: Node_Draw_Settings) {
+        const ctx = this._root._ctx;
+
+        //Determine points
+        const tri_points = [
+            [0, 0],
+            [0, 0],
+            [0, 0]
+        ];
+
+        tri_points[0][0] = _dimensions.base / 2;
+        tri_points[1][0] = 0;
+        tri_points[1][1] = _dimensions.height;
+        tri_points[2][0] = _dimensions.base;
+        tri_points[2][1] = _dimensions.height;
+
+        console.log("TRI points", tri_points);
+
+        //Apply transform
+        tri_points.forEach((point) => {
+            let x = point[0];
+            let y = point[1];
+
+            point[0] = x * _transform[0][0] + y * _transform[0][1] + _transform[0][2];
+            point[1] = x * _transform[1][0] + y * _transform[1][1] + _transform[1][2];
+        });
+
+        console.log("TRI transformed points", tri_points);
+
+        //Draw triangle
+        ctx.fillStyle = _draw.color;
+        console.log("Fill", ctx.fillStyle)
+        ctx.beginPath();
+        ctx.moveTo(tri_points[0][0], tri_points[0][1]);
+        ctx.lineTo(tri_points[1][0], tri_points[1][1]);
+        ctx.lineTo(tri_points[2][0], tri_points[2][1]);
+        ctx.fill();
     }    
 }
