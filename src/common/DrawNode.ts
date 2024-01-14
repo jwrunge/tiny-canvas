@@ -121,6 +121,8 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
         ];
         
         t = matrix_multiply(t, rotationMatrix);
+        this._local_transform = t;
+        return t;
     }
 
     //Paint settings

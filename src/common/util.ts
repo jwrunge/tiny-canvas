@@ -9,6 +9,7 @@ export function sort_nodes(nodes: Draw_Node<any>[], reverse = false) {
 export function matrix_multiply(a: Transform, b: Transform): Transform {
     let result: Transform = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
 
+    console.log(a, b)
     for(let i = 0; i < a.length; i++) {
         for(let j = 0; j < b[0].length; j++) {
             for(let k = 0; k < a[0].length; k++) {
