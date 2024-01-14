@@ -13,9 +13,9 @@
         const P = new Palette("Canvas", {canvas});
 
         let tri = P.create("Triangle", { base: 10, height: 15 }, { color: "red"});
-        // tri.transform_origin(5, 15);
+        tri.transform_origin(5, 15);
         tri.scale(10, 10);
-        tri.rotate(30);
+        // tri.rotate(30);
         tri.translate(105, 100);
 
         let tri2 = tri.create("Triangle", { base: 10, height: 15 }, { color: "green"}).translate(10, 10);
@@ -23,7 +23,7 @@
         
         let rotation = 0;
         setInterval(() => {
-            rotation += 1;
+            rotation += .75;
             tri.rotate(rotation);
             P.render();
         }, 1000/60);

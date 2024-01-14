@@ -105,65 +105,22 @@ export default class Draw_Node<T extends Node_Type> implements Godlike {
     }
 
     #apply_transforms() {
-        //Account for transform origin
-        const transform_origin: Transform = [
-            [1, 0, 0],//this._transform_origin[0]],
-            [0, 1, 0],//this._transform_origin[1]],
-            [0, 0, 1],
+        const mirror_x = this.#transforms.mirror === "x" || this.#transforms.mirror === "xy" ? -1 : 1;
+        const mirror_y = this.#transforms.mirror === "y" || this.#transforms.mirror === "xy" ? -1 : 1;
+
+        let t: Transform = [
+            [this.#transforms.scale[0] * mirror_x,  this.#transforms.skew[0],               0],
+            [this.#transforms.skew[1],              this.#transforms.scale[1] * mirror_y,   0],
+            [0,                                     0,                                      1],
         ];
 
-        // let m: Transform = structuredClone(transform_origin);
-
-        //Scaling
-        const scale: Transform = [
-            [this.#transforms.scale[0], 0, 0],
-            [0, this.#transforms.scale[1], 0],
+        const rotationMatrix: Transform = [
+            [Math.cos(this.#transforms.rotation), -Math.sin(this.#transforms.rotation), 0],
+            [Math.sin(this.#transforms.rotation), Math.cos(this.#transforms.rotation), 0],
             [0, 0, 1],
         ];
-
-        // m = matrix_multiply(transform_origin, scale);
-        let m = scale;
-
-        let cos = Math.cos(this.#transforms.rotation);
-        let sin = Math.sin(this.#transforms.rotation);
-        //Rotationhis.#transforms.rotation);
-
-        //Origin transform 2
-        // m = matrix_add(transform_origin, m);
         
-        const rot_transform: Transform = [
-            [cos, -sin, 0],
-            [sin, cos, 0],
-            [0, 0, 1],
-        ];
-
-        m = matrix_multiply(rot_transform, m);
-
-        //Translate
-        let translate_transform: Transform = [
-            [1, 0, this.#transforms.translation[0]],
-            [0, 1, this.#transforms.translation[1]],
-            [0, 0, 1],
-        ];
-
-        m = matrix_add(translate_transform, m);
-
-        // //Skew
-        // let skew_transform: Transform = [
-        //     [1, Math.tan(this.#transforms.skew[0]), 0],
-        //     [Math.tan(this.#transforms.skew[1]), 1, 0],
-        //     [0, 0, 1],
-        // ];
-
-        // //Mirror
-        // let mirror_transform: Transform = [
-        //     [["x", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0, 0],
-        //     [0, ["y", "xy"].includes(this.#transforms.mirror) ? -1 : 1, 0],
-        //     [0, 0, 1],
-        // ];
-
-        this._local_transform = m;
-        return m;
+        t = matrix_multiply(t, rotationMatrix);
     }
 
     //Paint settings
