@@ -32,8 +32,8 @@ export function width_height_from_dimensions(dimensions: Dimensions) {
 }
 
 export function applyMatrixToPoint(matrix: Transform, point: [number, number]): [number, number] {
-    const result: [number, number] = [0, 0];
-    result[0] = matrix[0] * point[0] + matrix[1] * point[1] + matrix[4];
-    result[1] = matrix[2] * point[0] + matrix[3] * point[1] + matrix[5];
-    return result;
+    return [
+        matrix[0] * point[0] + matrix[1] * point[1] + matrix[2],
+        matrix[3] * point[0] + matrix[4] * point[1] + matrix[5]
+    ];
 }
