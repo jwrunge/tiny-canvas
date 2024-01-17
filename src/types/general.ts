@@ -21,8 +21,8 @@ export type Typed_Renderer<T extends Renderer_Type> = T extends Canvas_Renderer 
 
 export interface Renderer {
     _root: Palette;
-    _draw(type: Node_Type, dimensions: Dimensions, transform: Transform, draw: Node_Draw_Settings): void,
-    _draw_triangle(dimensions: TriangleDimensions, transform: Transform, draw: Node_Draw_Settings): void
+    _draw(type: Node_Type, dimensions: Dimensions, transform: Transform, transforms: any & { origin: [number, number] }, draw: Node_Draw_Settings): void,
+    _draw_triangle(dimensions: TriangleDimensions, transform: Transform, transforms: any & { origin: [number, number] }, draw: Node_Draw_Settings): void
 }
 
 //Palette constructor preferences

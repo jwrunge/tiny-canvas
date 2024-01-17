@@ -12,22 +12,120 @@
         const canvas = document.getElementById('myCanvas');
         const P = new Palette("Canvas", {canvas});
 
-        let tri = P.create("Triangle", { base: 10, height: 15 }, { color: "red"});
-        tri.transform_origin(5, 15);
-        tri.scale(10, 10);
-        // tri.rotate(30);
-        tri.translate(105, 100);
+        let tri = P.create("Triangle", { base: 50, height: 50 }, { color: "red"});
 
-        let tri2 = tri.create("Triangle", { base: 10, height: 15 }, { color: "green"}).translate(10, 10);
-        console.log(tri2);
-        
-        let rotation = 0;
-        setInterval(() => {
-            rotation += .75;
-            tri.rotate(rotation);
+        // let tri2 = tri.create("Triangle", { base: 10, height: 15 }, { color: "green"}).translate(10, 10);
+
+        P.render();
+
+        document.getElementById("transx").addEventListener("input", updateTransX);
+        document.getElementById("transy").addEventListener("input", updateTransY);
+        document.getElementById("scalex").addEventListener("input", updateScaleX);
+        document.getElementById("scaley").addEventListener("input", updateScaleY);
+        document.getElementById("shearx").addEventListener("input", updateShearX);
+        document.getElementById("sheary").addEventListener("input", updateShearY);
+        document.getElementById("originx").addEventListener("input", updateOriginX);
+        document.getElementById("originy").addEventListener("input", updateOriginY);
+        document.getElementById("mirrorx").addEventListener("input", updateMirrorX);
+        document.getElementById("mirrory").addEventListener("input", updateMirrorY);
+        document.getElementById("rotate").addEventListener("input", updateRotate);
+        document.getElementById("clear").addEventListener("click", clear);
+
+
+        function updateTransX(e) {
+            tri.translate({x: e.target.value});
             P.render();
-        }, 1000/60);
+        }
+
+        function updateTransY(e) {
+            tri.translate({y: e.target.value});
+            P.render();
+        }
+
+        function updateScaleX(e) {
+            tri.scale({x: e.target.value});
+            P.render();
+        }
+
+        function updateScaleY(e) {
+            tri.scale({y: e.target.value});
+            P.render();
+        }
+
+        function updateShearX(e) {
+            tri.shear({x: e.target.value});
+            P.render();
+        }
+
+        function updateShearY(e) {
+            tri.shear({y: e.target.value});
+            P.render();
+        }
+
+        function updateOriginX(e) {
+            tri.transform_origin({x: e.target.value});
+            P.render();
+        }
+
+        function updateOriginY(e) {
+            tri.transform_origin({y: e.target.value});
+            P.render();
+        }
+
+        function updateMirrorX(e) {
+            let val = "none";
+            if(e.target.checked) val = "x";
+            if(tri.mirror() === "y" || tri.mirror === "xy") val += "y";
+            tri.mirror(val, 0);
+            P.render();
+        }
+
+        function updateMirrorY(e) {
+            let val = "none";
+            if(e.target.checked) val = "y";
+            if(tri.mirror() === "x" || tri.mirror === "xy") val = "x" + val;
+            tri.mirror(val, 0);
+            P.render();
+        }
+
+        function updateRotate(e) {
+            tri.rotateDeg(e.target.value);
+            P.render();
+        }
+
+        function clear(e) {
+            const els = document.querySelectorAll("input");
+            els.forEach(i=> {
+                if(i.id.includes("scale")) i.value = 1;
+                else i.value = 0;
+            });
+
+            //Reset all tri defaults
+            tri.translate({x: 0, y: 0});
+            tri.scale({x: 1, y: 1});
+            tri.shear({x: 0, y: 0});
+            tri.mirror(0, 0);
+            tri.rotateDeg(0);
+            tri.transform_origin({x: 0, y: 0});
+
+            P.render();
+        }
     </script>
+
+    <div class="controls">
+        <div><label for="">TRANS X</label></div><input value="0" type="number" id="transx">
+        <div><label for="">TRANS Y</label></div><input value="0" type="number" id="transy">
+        <div><label for="">SCALE X</label></div><input step="0.05" value="1" type="number" id="scalex">
+        <div><label for="">SCALE Y</label></div><input step="0.05" value="1" type="number" id="scaley">
+        <div><label for="">SHEAR X</label></div><input value="0" type="number" id="shearx">
+        <div><label for="">SHEAR Y</label></div><input value="0" type="number" id="sheary">
+        <div><label for="">ORIGIN X</label></div><input value="0" type="number" id="originx">
+        <div><label for="">ORIGIN Y</label></div><input value="0" type="number" id="originy">
+        <div><label for="">MIRROR X</label></div><input value="0" type="checkbox" id="mirrorx">
+        <div><label for="">MIRROR Y</label></div><input value="0" type="checkbox" id="mirrory">
+        <div><label for="">ROTATE&deg;: </label></div><input value="0" type="number" id="rotate">
+        <button id="clear">CLEAR</button>
+    </div>
 
     <style>
         body {
@@ -35,8 +133,25 @@
         }
         
         canvas {
-            width: 100%;
-            background: blue;
+            display: block;
+            max-height: 70vh;
+            max-width: 100%;
+            background: rgb(32, 32, 32);
+            margin: 0 auto;
+        }
+
+        .controls {
+            padding-top: 5px;
+            color: white;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        input {
+            background: rgb(32, 32, 32);
+            border: 1px solid rgb(71, 71, 71);
+            color: white;
         }
     </style>
 </body>

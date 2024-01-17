@@ -5,6 +5,7 @@ type ScaleY = number;
 type ShearX = number;
 type ShearY = number;
 
-export type Transform = [[ ScaleX, ShearX, TransX ],
-                         [ ShearY, ScaleY, TransY ],
-                         [ 0,      0,      1      ]];
+export type Transform = [   ScaleX, ShearX, TransX,
+                            ShearY, ScaleY, TransY,
+                            0,      0,      1
+                        ];
